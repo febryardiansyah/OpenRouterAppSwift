@@ -9,13 +9,18 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            List {
+                Section("Project Structure") {
+                    Text("Core")
+                    Text("Features/Chat")
+                }
+                Section("Status") {
+                    Text("Folders are ready. Implement MVVM files next.")
+                }
+            }
+            .navigationTitle("OpenRouter Swift")
         }
-        .padding()
     }
 }
 

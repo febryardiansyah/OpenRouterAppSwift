@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct openrouter_app_swiftApp: App {
+struct OpenRouterSwiftApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
