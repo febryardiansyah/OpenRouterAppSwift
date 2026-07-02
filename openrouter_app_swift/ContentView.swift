@@ -8,18 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Project Structure") {
-                    Text("Core")
-                    Text("Features/Chat")
+        TabView(selection: $selectedTab) {
+            ChatView()
+                .tabItem {
+                    Label("Chat", systemImage: "message")
                 }
-                Section("Status") {
-                    Text("Folders are ready. Implement MVVM files next.")
+                .tag(0)
+            ChatView()
+                .tabItem {
+                    Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
-            }
-            .navigationTitle("OpenRouter Swift")
+                .tag(1)
+            ChatView()
+                .tabItem {
+                    Label("Setting", systemImage: "gear.circle")
+                }
+                .tag(2)
         }
     }
 }
