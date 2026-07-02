@@ -17,7 +17,7 @@ struct ContentView: View {
                     Label("Chat", systemImage: "message")
                 }
                 .tag(0)
-            ChatView()
+            HistoryView()
                 .tabItem {
                     Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
