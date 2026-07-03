@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @State var inputText = ""
+    @State var showSheet = false
     
     struct ChatMessage: Identifiable {
         var id: UUID
@@ -26,14 +27,22 @@ struct ChatView: View {
         VStack(alignment: .leading) {
             HStack {
                 Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(.blue)
                 Spacer()
-                HStack {
-                    Text("Claude 3.5")
-                    Image(systemName: "chevron.down")
+                Button(action: {
+                    showSheet.toggle()
+                }) {
+                    HStack {
+                        Text("Claude 3.5")
+                        Image(systemName: "chevron.down")
+                    }
                 }
+                .foregroundStyle(.black)
+                .buttonStyle(GrowingButtonStyle())
                 Spacer()
                 Image(systemName: "plus.message")
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(.blue)
             }
             
@@ -63,6 +72,14 @@ struct ChatView: View {
             )
         }
         .padding()
+        .sheet(isPresented: $showSheet) {
+            BottomSheetContentView(
+                onClicked: { model in
+                    
+                }
+            )
+                .presentationDetents([.large])
+        }
     }
     
     struct BotChatView: View {
@@ -116,6 +133,105 @@ struct ChatView: View {
     }
 }
 
+struct AIModel: Identifiable, Equatable {
+    let id: UUID
+    let title: String
+    let description: String
+    
+    init(title: String, description: String) {
+        self.id = UUID()
+        self.title = title
+        self.description = description
+    }
+}
+
+private struct BottomSheetContentView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var searchInput = ""
+    @State private var selectedModel: AIModel?
+    
+    let onClicked: (AIModel) -> Void
+    
+    private let modelList: [AIModel] = [
+        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
+        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
+        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
+        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
+    ]
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Select Model")
+                    .font(.title2)
+                    .bold()
+                    .padding(.top, 20)
+                
+                Spacer()
+                
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Circle().fill(Color.gray.opacity(0.3)))
+                }
+                .buttonStyle(GrowingButtonStyle())
+            }
+            
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.gray)
+                TextField("", text: $searchInput, prompt: Text("Search models.."))
+            }
+            .padding(10)
+            .background(.gray.opacity(0.05))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            
+            VStack() {
+                ForEach(modelList) { item in
+                    HStack {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.blue)
+                            .padding(6)
+                            .background(.blue.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        VStack(alignment: .leading) {
+                            Text(item.title)
+                                .font(.system(.headline))
+                            Text(item.description)
+                                .font(.subheadline)
+                                .foregroundStyle(.gray)
+                        }
+                        Spacer()
+                        if selectedModel?.id == item.id {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .strokeBorder(selectedModel == item ? .blue: .white, lineWidth: 3)
+                    )
+                    .onTapGesture {
+                        selectedModel = item
+                        onClicked(item)
+                        dismiss()
+                    }
+                }
+            }
+            Spacer()
+        }
+        .padding()
+    }
+}
+
 #Preview {
+//    BottomSheetContentView()
     ChatView()
 }
