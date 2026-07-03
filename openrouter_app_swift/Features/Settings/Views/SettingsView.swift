@@ -11,8 +11,11 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack {
+                VStack(alignment: .leading, spacing: 32) {
                     ApiConfigurationItem()
+                    AppearanceItem()
+                    UsageStats()
+                    About()
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -22,7 +25,7 @@ struct SettingsView: View {
         }
     }
     
-    struct ApiConfigurationItem: View {
+    private struct ApiConfigurationItem: View {
         var body: some View {
             VStack(spacing: 8) {
                 CardWithHeader("API CONFIGURATION") {
@@ -61,6 +64,99 @@ struct SettingsView: View {
                 Text("Your key is stored locally on your device and is never sent to our servers.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+            }
+        }
+    }
+    
+    private struct AppearanceItem: View {
+        @State private var isDarkMode = false
+        @State private var isHighContrast = false
+        
+        var body: some View {
+            CardWithHeader("APPEARANCE", spacing: 10) {
+                RowItem(icon: "moon") {
+                    Toggle("Dark Mode", isOn: $isDarkMode)
+                }
+                
+                Divider()
+                
+                RowItem(icon: "moonphase.first.quarter", iconBackgroundColor: .orange) {
+                    Toggle("High Contrast", isOn: $isHighContrast)
+                }
+            }
+        }
+    }
+    
+    private struct UsageStats: View {
+        var body: some View {
+            CardWithHeader("USAGE STATS", spacing: 10) {
+                RowItem(icon: "gauge.chart.lefthalf.righthalf", iconBackgroundColor: .green) {
+                    Text("Token Used")
+                    Spacer()
+                    Text("4,521")
+                }
+                
+                Divider()
+                
+                RowItem(icon: "dollarsign.ring", iconBackgroundColor: .mint) {
+                    Text("Estimated Cost")
+                    Spacer()
+                    Text("$4,5")
+                }
+            }
+        }
+    }
+    
+    private struct About: View {
+        var body: some View {
+            CardWithHeader("ABOUT", spacing: 10, alignment: .center) {
+                RowItem(icon: "questionmark.circle", iconBackgroundColor: .gray) {
+                    Text("Help & Support")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.gray)
+                }
+                
+                Divider()
+                
+                RowItem(icon: "shield.lefthalf.filled", iconBackgroundColor: .gray) {
+                    Text("Privacy Policy")
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.gray)
+                }
+                
+                Divider()
+                
+                HStack(spacing: 34) {
+                    Text("Version")
+                    Text("1.0.4 (Build 42)")
+                }
+            }
+        }
+    }
+    
+    private struct RowItem<Content:View>: View {
+        let icon: String
+        let iconBackgroundColor: Color
+        let content: Content
+        
+        init(icon: String, iconBackgroundColor: Color = .purple, @ViewBuilder content: () -> Content) {
+            self.icon = icon
+            self.iconBackgroundColor = iconBackgroundColor
+            self.content = content()
+        }
+        var body: some View {
+            HStack {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .frame(width: 36, height: 36)
+                    .background(iconBackgroundColor)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                content
             }
         }
     }
