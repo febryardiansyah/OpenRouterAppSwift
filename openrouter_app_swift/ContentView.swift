@@ -22,9 +22,9 @@ struct ContentView: View {
                     Label("History", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
                 .tag(1)
-            ChatView()
+            SettingsView()
                 .tabItem {
-                    Label("Setting", systemImage: "gear.circle")
+                    Label("Settings", systemImage: "gear.circle")
                 }
                 .tag(2)
         }
