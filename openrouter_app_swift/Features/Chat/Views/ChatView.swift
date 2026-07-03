@@ -10,6 +10,7 @@ import SwiftUI
 struct ChatView: View {
     @State var inputText = ""
     @State var showSheet = false
+    @State var selectedModel: AIModel? = nil
     
     struct ChatMessage: Identifiable {
         var id: UUID
@@ -34,7 +35,8 @@ struct ChatView: View {
                     showSheet.toggle()
                 }) {
                     HStack {
-                        Text("Claude 3.5")
+                        Text(selectedModel?.name ?? "Choose Model")
+                            .lineLimit(1)
                         Image(systemName: "chevron.down")
                     }
                 }
@@ -74,11 +76,12 @@ struct ChatView: View {
         .padding()
         .sheet(isPresented: $showSheet) {
             BottomSheetContentView(
+                selectedModel: $selectedModel,
                 onClicked: { model in
-                    
+                    selectedModel = model
                 }
             )
-                .presentationDetents([.large])
+            .presentationDetents([.large])
         }
     }
     
@@ -133,31 +136,16 @@ struct ChatView: View {
     }
 }
 
-struct AIModel: Identifiable, Equatable {
-    let id: UUID
-    let title: String
-    let description: String
-    
-    init(title: String, description: String) {
-        self.id = UUID()
-        self.title = title
-        self.description = description
-    }
-}
-
 private struct BottomSheetContentView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchInput = ""
-    @State private var selectedModel: AIModel?
+    @Binding var selectedModel: AIModel?
     
-    let onClicked: (AIModel) -> Void
+    @State private var isLoading: Bool = true
+    @State private var modelList: [AIModel] = []
+    @State private var errorMessage: String? = nil
     
-    private let modelList: [AIModel] = [
-        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
-        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
-        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
-        AIModel(title: "GPT 4", description: "Fastest, most capable model"),
-    ]
+    let onClicked: (AIModel?) -> Void
     
     var body: some View {
         VStack(spacing: 20) {
@@ -185,53 +173,117 @@ private struct BottomSheetContentView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.gray)
                 TextField("", text: $searchInput, prompt: Text("Search models.."))
+                    .onSubmit {
+                        Task {
+                            await fetchModels()
+                        }
+                    }
             }
             .padding(10)
             .background(.gray.opacity(0.05))
             .clipShape(RoundedRectangle(cornerRadius: 8))
             
-            VStack() {
-                ForEach(modelList) { item in
-                    HStack {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundStyle(.blue)
-                            .padding(6)
-                            .background(.blue.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        VStack(alignment: .leading) {
-                            Text(item.title)
-                                .font(.system(.headline))
-                            Text(item.description)
-                                .font(.subheadline)
-                                .foregroundStyle(.gray)
+            if let model = selectedModel {
+                ModelItem(
+                    name: model.name,
+                    description: model.description,
+                    isSelected: true,
+                )
+                .onTapGesture {
+                    selectedModel = nil
+                    onClicked(selectedModel)
+                    dismiss()
+                }
+            }
+            
+            Group {
+                if isLoading {
+                    ProgressView("Fetching models")
+                } else if let error = errorMessage {
+                    Text(error).foregroundStyle(.red)
+                } else {
+                    ScrollView {
+                        VStack() {
+                            ForEach(modelList.filter { $0.id != selectedModel?.id}) { item in
+                                ModelItem(
+                                    name: item.name,
+                                    description: item.description,
+                                    isSelected: selectedModel?.id == item.id
+                                )
+                                .onTapGesture {
+                                    selectedModel = item
+                                    onClicked(item)
+                                    dismiss()
+                                }
+                            }
                         }
-                        Spacer()
-                        if selectedModel?.id == item.id {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.blue)
-                        }
-                    }
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 18)
-                            .strokeBorder(selectedModel == item ? .blue: .white, lineWidth: 3)
-                    )
-                    .onTapGesture {
-                        selectedModel = item
-                        onClicked(item)
-                        dismiss()
                     }
                 }
             }
             Spacer()
         }
         .padding()
+        .task {
+            await fetchModels()
+        }
+    }
+    
+    private struct ModelItem: View {
+        let name: String
+        let description: String
+        let isSelected: Bool
+        
+        var body: some View {
+            HStack {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(.blue)
+                    .padding(6)
+                    .background(.blue.opacity(0.2))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                VStack(alignment: .leading) {
+                    Text(name)
+                        .font(.system(.headline))
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.gray)
+                        .lineLimit(2)
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding()
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(isSelected ? .blue: .white, lineWidth: 3)
+            )
+        }
+    }
+    
+    private func fetchModels() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let response: AIModelResponse = try await ApiClient.shared.request(
+                endpoint: "models",
+                queryParams: [
+                    "q": searchInput
+                ]
+            )
+            self.modelList = response.data
+            
+            isLoading = false
+        } catch {
+            isLoading = false
+            errorMessage = "Failed to fetch"
+        }
     }
 }
 
 #Preview {
-//    BottomSheetContentView()
     ChatView()
 }
