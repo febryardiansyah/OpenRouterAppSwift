@@ -4,7 +4,15 @@ enum APIError: Error {
     case invalidUrl
     case serverError
     case decodingError
+    case encodingError
 }
+
+enum HTTPMethod: String {
+    case get = "GET"
+    case post = "POST"
+}
+
+private struct EmptyBody: Encodable {}
 
 class ApiClient {
     static let shared = ApiClient()
@@ -13,7 +21,12 @@ class ApiClient {
     
     private init() {}
     
-    func request<T: Decodable> (endpoint: String, queryParams: [String: String]? = nil) async throws -> T {
+    func request<T: Decodable, U: Encodable> (
+        endpoint: String,
+        method: HTTPMethod = .get,
+        queryParams: [String: String]? = nil,
+        body: U? = nil as EmptyBody?
+    ) async throws -> T {
         guard var urlComponents = URLComponents(string: "\(baseURL)/\(endpoint)") else {
             throw APIError.invalidUrl
         }
@@ -27,8 +40,18 @@ class ApiClient {
         }
                 
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = method.rawValue
         request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
+        
+        if let body = body {
+            do {
+                let encoder = JSONEncoder()
+                
+                request.httpBody = try encoder.encode(body)
+            } catch {
+                throw APIError.encodingError
+            }
+        }
         
         let(data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,

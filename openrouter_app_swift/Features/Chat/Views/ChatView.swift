@@ -12,16 +12,16 @@ struct ChatView: View {
     @State var showSheet = false
     @State var selectedModel: AIModel? = nil
     
-    struct ChatMessage: Identifiable {
+    struct LocalChatMessage: Identifiable {
         var id: UUID
         var message: String
         var isBot: Bool
     }
     
-    let chatMessages: [ChatMessage] = [
-        ChatMessage(id: UUID(), message: "Hi", isBot: false),
-        ChatMessage(id: UUID(), message: "Meeting Management - Tanggal Agenda Tidak disable Saat edit Agenda In Progress", isBot: true),
-        ChatMessage(id: UUID(), message: "Custom images don’t provide a text baseline guide, so the bottom of the image aligns to the text view’s baseline", isBot: false),
+    let chatMessages: [LocalChatMessage] = [
+        LocalChatMessage(id: UUID(), message: "Hi", isBot: false),
+        LocalChatMessage(id: UUID(), message: "Meeting Management - Tanggal Agenda Tidak disable Saat edit Agenda In Progress", isBot: true),
+        LocalChatMessage(id: UUID(), message: "Custom images don’t provide a text baseline guide, so the bottom of the image aligns to the text view’s baseline", isBot: false),
     ]
     
     var body: some View {
@@ -64,6 +64,11 @@ struct ChatView: View {
                 Image(systemName: "plus")
                     .padding(.trailing)
                 TextField("",text: $inputText, prompt: Text("What's your thoughts"))
+                    .onSubmit {
+                        Task {
+                            await sendMessage()
+                        }
+                    }
                 Image(systemName: "microphone")
                     .padding(.leading)
             }
@@ -82,6 +87,24 @@ struct ChatView: View {
                 }
             )
             .presentationDetents([.large])
+        }
+    }
+    
+    private func sendMessage() async {
+        let request = ChatRequestList(
+            messages: [
+                ChatMessage(content: "What is the capital of France?", role: "user")
+            ]
+        )
+        do {
+            let response: ChatResponseChoice = try await ApiClient.shared.request(
+                endpoint: "chat/completions",
+                body: request
+            )
+            
+            print("send message response \(response.choices.first?.content ?? "")")
+        } catch {
+            print("Failed to send message \(error)")
         }
     }
     
