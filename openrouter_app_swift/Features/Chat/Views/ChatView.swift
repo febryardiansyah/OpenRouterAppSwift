@@ -91,18 +91,20 @@ struct ChatView: View {
     }
     
     private func sendMessage() async {
-        let request = ChatRequestList(
+        guard let selectedModelId = selectedModel?.id else {
+            return
+        }
+        
+        let chatRequest = ChatRequest(
+            model: selectedModelId,
             messages: [
                 ChatMessage(content: "What is the capital of France?", role: "user")
             ]
         )
+        let service = ChatService()
+        
         do {
-            let response: ChatResponseChoice = try await ApiClient.shared.request(
-                endpoint: "chat/completions",
-                body: request
-            )
-            
-            print("send message response \(response.choices.first?.content ?? "")")
+            try await service.sendMessage(chatRequest: chatRequest)
         } catch {
             print("Failed to send message \(error)")
         }
@@ -291,13 +293,9 @@ private struct BottomSheetContentView: View {
         isLoading = true
         errorMessage = nil
         do {
-            let response: AIModelResponse = try await ApiClient.shared.request(
-                endpoint: "models",
-                queryParams: [
-                    "q": searchInput
-                ]
-            )
-            self.modelList = response.data
+            let service = ChatService()
+            let response = try await service.fetchModels(query: searchInput)
+            self.modelList = response
             
             isLoading = false
         } catch {

@@ -21,11 +21,11 @@ class ApiClient {
     
     private init() {}
     
-    func request<T: Decodable, U: Encodable> (
+    func request<T: Decodable> (
         endpoint: String,
         method: HTTPMethod = .get,
         queryParams: [String: String]? = nil,
-        body: U? = nil as EmptyBody?
+        body: Encodable? = nil
     ) async throws -> T {
         guard var urlComponents = URLComponents(string: "\(baseURL)/\(endpoint)") else {
             throw APIError.invalidUrl
@@ -38,13 +38,17 @@ class ApiClient {
         guard let url = urlComponents.url else {
             throw APIError.invalidUrl
         }
-                
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
+        
+        print("REQUEST \(method.rawValue) | ENDPOINT \(endpoint)")
         
         if let body = body {
             do {
+                print("REQUEST BODY \(body)")
                 let encoder = JSONEncoder()
                 
                 request.httpBody = try encoder.encode(body)
@@ -58,6 +62,8 @@ class ApiClient {
               (200...299).contains(httpResponse.statusCode) else {
             throw APIError.serverError
         }
+        
+        print("RESPONSE \(data)")
         
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)

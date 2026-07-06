@@ -1,6 +1,6 @@
 import Foundation
 
-struct ChatMessage: Identifiable, Codable {
+struct ChatMessage: Codable {
 //    var id: UUID
     let content: String
     let role: String
@@ -12,10 +12,14 @@ struct ChatMessage: Identifiable, Codable {
     }
 }
 
-struct ChatRequestList: Encodable {
+struct ChatRequest: Codable {
+    let model: String
     let messages: [ChatMessage]
 }
 
-struct ChatResponseChoice: Decodable {
-    let choices: [ChatMessage]
+struct ChatResponse: Codable {
+    struct Choice: Codable {
+        let message: ChatMessage
+    }
+    let choices: [Choice]
 }
