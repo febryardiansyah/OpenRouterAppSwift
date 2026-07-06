@@ -12,17 +12,9 @@ struct ChatView: View {
     @State var showSheet = false
     @State var selectedModel: AIModel? = nil
     
-    struct LocalChatMessage: Identifiable {
-        var id: UUID
-        var message: String
-        var isBot: Bool
-    }
+    @State var chatMessages: [ChatMessage] = []
     
-    let chatMessages: [LocalChatMessage] = [
-        LocalChatMessage(id: UUID(), message: "Hi", isBot: false),
-        LocalChatMessage(id: UUID(), message: "Meeting Management - Tanggal Agenda Tidak disable Saat edit Agenda In Progress", isBot: true),
-        LocalChatMessage(id: UUID(), message: "Custom images don’t provide a text baseline guide, so the bottom of the image aligns to the text view’s baseline", isBot: false),
-    ]
+    @StateObject private var sendMessageViewModel = SendMessageViewModel()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -48,35 +40,43 @@ struct ChatView: View {
                     .foregroundColor(.blue)
             }
             
-            ScrollView {
-                VStack (spacing: 16) {
-                    ForEach(chatMessages) { chat in
-                        if chat.isBot {
-                            BotChatView(chat.message)
-                        } else {
-                            UserChatView(chat.message)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack (spacing: 16) {
+                        ForEach(chatMessages) { chat in
+                            if chat.role != "user" {
+                                BotChatView(chat.content)
+                            } else {
+                                UserChatView(chat.content)
+                            }
                         }
                     }
                 }
-            }
-            
-            HStack {
-                Image(systemName: "plus")
-                    .padding(.trailing)
-                TextField("",text: $inputText, prompt: Text("What's your thoughts"))
-                    .onSubmit {
-                        Task {
-                            await sendMessage()
+                
+                HStack {
+                    Image(systemName: "plus")
+                        .padding(.trailing)
+                    TextField("",text: $inputText, prompt: Text("What's your thoughts"))
+                        .onSubmit {
+                            Task {
+                                await sendMessage()
+                            }
+                            
+                            withAnimation {
+                                if let lastId = chatMessages.last?.id {
+                                    proxy.scrollTo(lastId, anchor: .bottom)
+                                }
+                            }
                         }
-                    }
-                Image(systemName: "microphone")
-                    .padding(.leading)
+                    Image(systemName: "microphone")
+                        .padding(.leading)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(.gray.opacity(0.2))
+                )
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(.gray.opacity(0.2))
-            )
         }
         .padding()
         .sheet(isPresented: $showSheet) {
@@ -91,21 +91,39 @@ struct ChatView: View {
     }
     
     private func sendMessage() async {
+        chatMessages.append(
+            ChatMessage(content: inputText, role: "user")
+        )
+        
+        inputText = ""
+        
         guard let selectedModelId = selectedModel?.id else {
             return
         }
         
         let chatRequest = ChatRequest(
             model: selectedModelId,
-            messages: [
-                ChatMessage(content: "What is the capital of France?", role: "user")
-            ]
+            messages: chatMessages
         )
-        let service = ChatRepository()
+        
+        chatMessages.append(
+            ChatMessage(content: "Answering..", role: "assistant")
+        )
         
         do {
-            try await service.sendMessage(chatRequest: chatRequest)
+            try await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
+            
+            if let message = sendMessageViewModel.data?.message {
+                chatMessages.remove(at: chatMessages.count - 1)
+                chatMessages.append(
+                    message
+                )
+            }
         } catch {
+            chatMessages.remove(at: chatMessages.count - 1)
+            chatMessages.append(
+                ChatMessage(content: "Failed to send message \(error)", role: "assistant")
+            )
             print("Failed to send message \(error)")
         }
     }

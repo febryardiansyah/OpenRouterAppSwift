@@ -1,6 +1,6 @@
 protocol ChatRepositoryProtocol {
     func fetchModels(query: String) async throws -> [AIModel]
-    func sendMessage(chatRequest: ChatRequest) async throws -> Void
+    func sendMessage(chatRequest: ChatRequest) async throws -> ChatResponse
 }
 
 final class ChatRepository: ChatRepositoryProtocol {
@@ -10,11 +10,13 @@ final class ChatRepository: ChatRepositoryProtocol {
         return response.data
     }
     
-    func sendMessage(chatRequest: ChatRequest) async throws {
-        let _: ChatResponse = try await ApiClient.shared.request(
+    func sendMessage(chatRequest: ChatRequest) async throws -> ChatResponse {
+        let response: ChatResponse = try await ApiClient.shared.request(
             endpoint: "chat/completions",
             method: .post,
             body: chatRequest
         )
+        
+        return response
     }
 }
