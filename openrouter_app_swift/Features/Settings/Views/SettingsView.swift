@@ -26,6 +26,15 @@ struct SettingsView: View {
     }
     
     private struct ApiConfigurationItem: View {
+        @State private var input = ""
+        let apiKey = OpenRouterKeyService.getApiKey()
+        
+        init() {
+            if let key = apiKey {
+                self.input = key
+            }
+        }
+        
         var body: some View {
             VStack(spacing: 8) {
                 CardWithHeader("API CONFIGURATION") {
@@ -40,10 +49,20 @@ struct SettingsView: View {
                             Text("OpenRouter Key")
                                 .font(.title3)
                                 .foregroundStyle(.primary)
-                            Text("••••••••••••••••••••••••••••••••")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
+                            
+                            SecureField("", text: $input, prompt: Text("Input your API key here"))
+                                .onSubmit {
+                                    print("API_KEY \(input)")
+                                    OpenRouterKeyService.setApiKey(value: input)
+                                }
+//                            if apiKey != nil {
+//                                Text("••••••••••••••••••••••••••••••••")
+//                                    .font(.subheadline)
+//                                    .foregroundStyle(.secondary)
+//                                    .lineLimit(1)
+//                            } else {
+//                                
+//                            }
                         }
                         Spacer()
                     }
