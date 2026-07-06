@@ -1,9 +1,9 @@
-protocol ChatServiceProtocol {
+protocol ChatRepositoryProtocol {
     func fetchModels(query: String) async throws -> [AIModel]
     func sendMessage(chatRequest: ChatRequest) async throws -> Void
 }
 
-final class ChatService: ChatServiceProtocol {
+final class ChatRepository: ChatRepositoryProtocol {
     func fetchModels(query: String) async throws -> [AIModel] {
         let response: AIModelResponse = try await ApiClient.shared.request(endpoint: "models", queryParams: ["q": query])
         
@@ -11,7 +11,7 @@ final class ChatService: ChatServiceProtocol {
     }
     
     func sendMessage(chatRequest: ChatRequest) async throws {
-        let response: ChatResponse = try await ApiClient.shared.request(
+        let _: ChatResponse = try await ApiClient.shared.request(
             endpoint: "chat/completions",
             method: .post,
             body: chatRequest

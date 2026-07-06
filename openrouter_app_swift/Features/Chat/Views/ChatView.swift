@@ -101,7 +101,7 @@ struct ChatView: View {
                 ChatMessage(content: "What is the capital of France?", role: "user")
             ]
         )
-        let service = ChatService()
+        let service = ChatRepository()
         
         do {
             try await service.sendMessage(chatRequest: chatRequest)
@@ -166,9 +166,7 @@ private struct BottomSheetContentView: View {
     @State private var searchInput = ""
     @Binding var selectedModel: AIModel?
     
-    @State private var isLoading: Bool = true
-    @State private var modelList: [AIModel] = []
-    @State private var errorMessage: String? = nil
+    @StateObject private var viewModel = AIModelViewModel()
     
     let onClicked: (AIModel?) -> Void
     
@@ -200,7 +198,7 @@ private struct BottomSheetContentView: View {
                 TextField("", text: $searchInput, prompt: Text("Search models.."))
                     .onSubmit {
                         Task {
-                            await fetchModels()
+                            await viewModel.fetchModels(query: searchInput)
                         }
                     }
             }
@@ -222,14 +220,14 @@ private struct BottomSheetContentView: View {
             }
             
             Group {
-                if isLoading {
+                if viewModel.isLoading {
                     ProgressView("Fetching models")
-                } else if let error = errorMessage {
+                } else if let error = viewModel.errorMessage {
                     Text(error).foregroundStyle(.red)
                 } else {
                     ScrollView {
                         VStack() {
-                            ForEach(modelList.filter { $0.id != selectedModel?.id}) { item in
+                            ForEach(viewModel.modelList.filter { $0.id != selectedModel?.id}) { item in
                                 ModelItem(
                                     name: item.name,
                                     description: item.description,
@@ -249,7 +247,7 @@ private struct BottomSheetContentView: View {
         }
         .padding()
         .task {
-            await fetchModels()
+            await viewModel.fetchModels(query: searchInput)
         }
     }
     
@@ -286,21 +284,6 @@ private struct BottomSheetContentView: View {
                 RoundedRectangle(cornerRadius: 18)
                     .strokeBorder(isSelected ? .blue: .white, lineWidth: 3)
             )
-        }
-    }
-    
-    private func fetchModels() async {
-        isLoading = true
-        errorMessage = nil
-        do {
-            let service = ChatService()
-            let response = try await service.fetchModels(query: searchInput)
-            self.modelList = response
-            
-            isLoading = false
-        } catch {
-            isLoading = false
-            errorMessage = "Failed to fetch"
         }
     }
 }

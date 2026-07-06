@@ -63,10 +63,9 @@ class ApiClient {
             throw APIError.serverError
         }
         
-        print("RESPONSE \(data)")
-        
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
+            print("RESPONSE \(decodedData)")
             
             return decodedData
         } catch {
