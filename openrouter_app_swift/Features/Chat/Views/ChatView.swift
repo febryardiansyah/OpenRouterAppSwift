@@ -16,6 +16,8 @@ struct ChatView: View {
     
     @StateObject private var sendMessageViewModel = SendMessageViewModel()
     
+    @State private var toast: ToastMessage? = nil
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -79,6 +81,7 @@ struct ChatView: View {
             }
         }
         .padding()
+        .showToast(toast: $toast)
         .sheet(isPresented: $showSheet) {
             BottomSheetContentView(
                 selectedModel: $selectedModel,
@@ -98,6 +101,8 @@ struct ChatView: View {
         inputText = ""
         
         guard let selectedModelId = selectedModel?.id else {
+            toast = ToastMessage(icon: "exclamationmark.triangle.fill", message: "You have to choose model first", tint: .secondary)
+            chatMessages.remove(at: chatMessages.count - 1)
             return
         }
         
@@ -110,21 +115,21 @@ struct ChatView: View {
             ChatMessage(content: "Answering..", role: "assistant")
         )
         
-        do {
-            try await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
-            
-            if let message = sendMessageViewModel.data?.message {
-                chatMessages.remove(at: chatMessages.count - 1)
-                chatMessages.append(
-                    message
-                )
-            }
-        } catch {
+        await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
+        
+        if let message = sendMessageViewModel.data?.message {
             chatMessages.remove(at: chatMessages.count - 1)
             chatMessages.append(
-                ChatMessage(content: "Failed to send message \(error)", role: "assistant")
+                message
             )
-            print("Failed to send message \(error)")
+        }
+        
+        if let error = sendMessageViewModel.errorMessage {
+            chatMessages.remove(at: chatMessages.count - 1)
+            chatMessages.append(
+                ChatMessage(content: "\(error)", role: "assistant")
+            )
+            print("\(error)")
         }
     }
     

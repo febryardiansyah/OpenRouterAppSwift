@@ -1,18 +1,9 @@
 import Foundation
 
-enum APIError: Error {
-    case invalidUrl
-    case serverError
-    case decodingError
-    case encodingError
-}
-
 enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
 }
-
-private struct EmptyBody: Encodable {}
 
 class ApiClient {
     static let shared = ApiClient()
@@ -39,10 +30,15 @@ class ApiClient {
             throw APIError.invalidUrl
         }
         
+        guard let apiKey = OpenRouterKeyService.getApiKey() else {
+            throw APIError.apiKeyNotFound
+        }
+        
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+//        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
         
         print("REQUEST \(method.rawValue) | ENDPOINT \(endpoint)")
         
@@ -58,9 +54,17 @@ class ApiClient {
         }
         
         let(data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.serverError
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.serverError(errorData: ErrorData(error: .init(code: -1, message: "Non-HTTP response")))
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            if let decodedError = try? JSONDecoder().decode(ErrorData.self, from: data) {
+                print("API REQUEST ERROR \(httpResponse.statusCode) | DATA \(decodedError)")
+                throw APIError.serverError(errorData: decodedError)
+            }
+            throw APIError.serverError(errorData: ErrorData(error: .init(code: httpResponse.statusCode, message: "Unknown error")))
         }
         
         do {
@@ -69,7 +73,7 @@ class ApiClient {
             
             return decodedData
         } catch {
-            print("API REQUEST ERROR \(error)")
+            print("API REQUEST DECODE ERROR \(error)")
             throw APIError.decodingError
         }
     }

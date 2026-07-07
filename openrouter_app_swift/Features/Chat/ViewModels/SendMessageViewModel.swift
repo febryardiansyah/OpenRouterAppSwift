@@ -12,7 +12,7 @@ final class SendMessageViewModel: ObservableObject {
         self.chatRepository = ChatRepository()
     }
     
-    func sendMessage(chatRequest: ChatRequest) async throws -> Void{
+    func sendMessage(chatRequest: ChatRequest) async {
         isLoading = false
         errorMessage = nil
         
@@ -20,6 +20,8 @@ final class SendMessageViewModel: ObservableObject {
             let response: ChatResponse = try await chatRepository.sendMessage(chatRequest: chatRequest)
             
             self.data = response.choices.first
+        } catch let error as APIError {
+            errorMessage = HandleApiError(error)
         } catch {
             errorMessage = "Failed to send message \(error)"
         }
