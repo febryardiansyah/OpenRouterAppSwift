@@ -6,7 +6,7 @@ struct CardTheme: ViewModifier {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(.white)
+                    .fill(Color(UIColor.secondarySystemBackground))
             )
     }
 }

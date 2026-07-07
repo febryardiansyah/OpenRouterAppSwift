@@ -34,7 +34,7 @@ struct ChatView: View {
                         Image(systemName: "chevron.down")
                     }
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.foreground)
                 .buttonStyle(GrowingButtonStyle())
                 Spacer()
                 Image(systemName: "plus.message")
@@ -305,7 +305,7 @@ private struct BottomSheetContentView: View {
             .padding()
             .overlay(
                 RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(isSelected ? .blue: .white, lineWidth: 3)
+                    .strokeBorder(isSelected ? .blue : .clear, lineWidth: 3)
             )
         }
     }

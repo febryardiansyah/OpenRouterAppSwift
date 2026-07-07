@@ -68,7 +68,7 @@ struct HistoryView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .background(.secondary.opacity(0.1))
+            .background(Color(UIColor.systemBackground))
             .navigationTitle("History")
         }
     }
@@ -122,7 +122,7 @@ struct HistoryView: View {
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(.white)
+                        .fill(Color(UIColor.secondarySystemBackground))
                 )
             }
         }

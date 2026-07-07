@@ -20,7 +20,7 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .background(.secondary.opacity(0.1))
+            .background(Color(UIColor.systemBackground))
             .navigationTitle("Settings")
         }
     }
@@ -88,7 +88,7 @@ struct SettingsView: View {
     }
     
     private struct AppearanceItem: View {
-        @State private var isDarkMode = false
+        @AppStorage("isDarkMode") private var isDarkMode = false
         @State private var isHighContrast = false
         
         var body: some View {

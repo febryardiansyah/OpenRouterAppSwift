@@ -1,0 +1,24 @@
+import KeychainAccess
+import Foundation
+
+class KeyChainManager {
+    static let shared = KeyChainManager()
+    init() {}
+    
+    private let keyChain = Keychain(service: "com.febryards.openrouterapp")
+    private let apiKeyConstant = "user_api_key"
+    
+    func saveApiKey(_ value: String) {
+        let cleanValue = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !cleanValue.isEmpty else {
+            return
+        }
+        
+        keyChain[apiKeyConstant] = value
+    }
+    
+    func getApiKey() -> String? {
+        return keyChain[apiKeyConstant]
+    }
+}
