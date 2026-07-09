@@ -26,6 +26,9 @@ func HandleApiError(_ error: APIError) -> String {
     case .invalidUrl:
         return "Invalid Url"
     case .serverError(let errorData):
+        if errorData.error.code == 401 {
+            return "Api key is not valid or not provided"
+        }
         return "\(errorData.error.message)"
     case .decodingError:
         return "Failed to decode data"

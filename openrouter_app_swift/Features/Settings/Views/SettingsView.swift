@@ -29,6 +29,9 @@ struct SettingsView: View {
         @State private var inputKey = ""
         @State private var hasSavedKey = false
         @State private var showSuccessAlert = false
+        @State private var showTestConnectionFailed = false
+        
+        @StateObject private var remainingCreditsViewModel = RemainingCreditsViewModel()
         
         var body: some View {
             VStack(spacing: 8) {
@@ -77,13 +80,22 @@ struct SettingsView: View {
                     HStack {
                         Text("Test Connection")
                             .font(.headline)
-                            .foregroundStyle(Color.blue)
+                            .foregroundStyle(hasSavedKey ? .blue : .gray)
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(.tertiary)
                     }
                     .padding(.vertical, 14)
+                    .onTapGesture {
+                        Task {
+                            await remainingCreditsViewModel.fetchRemainingCredits()
+                            
+                            if remainingCreditsViewModel.errorMessage != nil {
+                                showTestConnectionFailed = true
+                            }
+                        }
+                    }
                 }
                 
                 Text("Your key is stored locally on your device and is never sent to our servers.")
@@ -97,6 +109,11 @@ struct SettingsView: View {
                 }
             })
             .alert("API key saved", isPresented: $showSuccessAlert, actions: {
+                Button("OK", role: .cancel) {
+                    
+                }
+            })
+            .alert(remainingCreditsViewModel.errorMessage ?? "Test Connection Failed", isPresented: $showTestConnectionFailed, actions: {
                 Button("OK", role: .cancel) {
                     
                 }
