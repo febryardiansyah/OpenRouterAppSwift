@@ -21,4 +21,12 @@ class KeyChainManager {
     func getApiKey() -> String? {
         return keyChain[apiKeyConstant]
     }
+    
+    func removeApiKey() {
+        do {
+            try keyChain.remove(apiKeyConstant)
+        } catch {
+            print("Failed to remove API Key: \(error.localizedDescription)")
+        }
+    }
 }

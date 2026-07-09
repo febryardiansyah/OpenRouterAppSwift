@@ -26,14 +26,9 @@ struct SettingsView: View {
     }
     
     private struct ApiConfigurationItem: View {
-        @State private var input = ""
-        let apiKey = OpenRouterKeyService.getApiKey()
-        
-        init() {
-            if let key = apiKey {
-                self.input = key
-            }
-        }
+        @State private var inputKey = ""
+        @State private var hasSavedKey = false
+        @State private var showSuccessAlert = false
         
         var body: some View {
             VStack(spacing: 8) {
@@ -50,19 +45,30 @@ struct SettingsView: View {
                                 .font(.title3)
                                 .foregroundStyle(.primary)
                             
-                            SecureField("", text: $input, prompt: Text("Input your API key here"))
+                            SecureField("", text: $inputKey, prompt: Text("Input your API key here"))
                                 .onSubmit {
-                                    print("API_KEY \(input)")
-                                    OpenRouterKeyService.setApiKey(value: input)
+                                    print("API_KEY \(inputKey)")
+                                    
+                                    guard !inputKey.isEmpty else {
+                                        return
+                                    }
+                                    
+                                    KeyChainManager.shared.saveApiKey(inputKey)
+                                    hasSavedKey = true
+                                    showSuccessAlert = true
+                                    
+                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                                 }
-//                            if apiKey != nil {
-//                                Text("••••••••••••••••••••••••••••••••")
-//                                    .font(.subheadline)
-//                                    .foregroundStyle(.secondary)
-//                                    .lineLimit(1)
-//                            } else {
-//                                
-//                            }
+                            
+                            if hasSavedKey {
+                                Button(role: .destructive, action: {
+                                    inputKey = ""
+                                    KeyChainManager.shared.removeApiKey()
+                                    hasSavedKey = false
+                                }) {
+                                    Text("Remove key")
+                                }
+                            }
                         }
                         Spacer()
                     }
@@ -84,6 +90,17 @@ struct SettingsView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+            .onAppear(perform: {
+                if let savedKey = KeyChainManager.shared.getApiKey() {
+                    inputKey = savedKey
+                    hasSavedKey = true
+                }
+            })
+            .alert("API key saved", isPresented: $showSuccessAlert, actions: {
+                Button("OK", role: .cancel) {
+                    
+                }
+            })
         }
     }
     

@@ -30,7 +30,7 @@ class ApiClient {
             throw APIError.invalidUrl
         }
         
-        guard let apiKey = OpenRouterKeyService.getApiKey() else {
+        guard let apiKey = KeyChainManager.shared.getApiKey() else {
             throw APIError.apiKeyNotFound
         }
         
