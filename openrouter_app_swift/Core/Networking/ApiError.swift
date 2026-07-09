@@ -15,6 +15,12 @@ struct ErrorData: Codable {
     let error: Error
 }
 
+extension APIError {
+    func parse() -> String{
+        return HandleApiError(self)
+    }
+}
+
 func HandleApiError(_ error: APIError) -> String {
     switch error {
     case .invalidUrl:

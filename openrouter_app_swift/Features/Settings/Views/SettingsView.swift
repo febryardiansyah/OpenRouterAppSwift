@@ -124,21 +124,41 @@ struct SettingsView: View {
     }
     
     private struct UsageStats: View {
+        @StateObject private var remainingCreditsViewModel = RemainingCreditsViewModel()
+        
         var body: some View {
             CardWithHeader("USAGE STATS", spacing: 10) {
-                RowItem(icon: "gauge.chart.lefthalf.righthalf", iconBackgroundColor: .green) {
-                    Text("Token Used")
+                RowItem(icon: "dollarsign.ring", iconBackgroundColor: .mint) {
+                    Text("Total Credits")
                     Spacer()
-                    Text("4,521")
+                    if remainingCreditsViewModel.isLoading {
+                        ProgressView()
+                    }
+                    else if let data = remainingCreditsViewModel.data {
+                        Text("$\(data.totalCredits.formatted(.number.precision(.fractionLength(2))))")
+                    } else {
+                        Text("---")
+                    }
                 }
                 
                 Divider()
                 
-                RowItem(icon: "dollarsign.ring", iconBackgroundColor: .mint) {
-                    Text("Estimated Cost")
+                RowItem(icon: "gauge.chart.lefthalf.righthalf", iconBackgroundColor: .green) {
+                    Text("Total Usage")
                     Spacer()
-                    Text("$4,5")
+                    if remainingCreditsViewModel.isLoading {
+                        ProgressView()
+                    }
+                    else if let data = remainingCreditsViewModel.data {
+                        Text("$\(data.totalUsage.formatted(.number.precision(.fractionLength(2))))")
+                    } else {
+                        Text("---")
+                    }
                 }
+                
+            }
+            .task {
+                await remainingCreditsViewModel.fetchRemainingCredits()
             }
         }
     }
