@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ChatView: View {
     @State var inputText = ""
@@ -15,8 +16,11 @@ struct ChatView: View {
     @State var chatMessages: [ChatMessage] = []
     
     @StateObject private var sendMessageViewModel = SendMessageViewModel()
+    @StateObject private var clarifyMessageViewModel = ClarifyMessageTitleViewModel()
     
     @State private var toast: ToastMessage? = nil
+    
+    @Environment(\.modelContext) private var context
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -122,6 +126,14 @@ struct ChatView: View {
             chatMessages.append(
                 message
             )
+            
+            await clarifyMessageViewModel.setTitle(for: chatMessages.first?.content ?? "Anything")
+            
+            if let title = clarifyMessageViewModel.title {
+                let historyItem = HistoryItem(title: title, lastMessage: message.content, modelId: selectedModelId)
+                
+                HistoryRepository.shared.logAction(item: historyItem, in: context)
+            }
         }
         
         if let error = sendMessageViewModel.errorMessage {

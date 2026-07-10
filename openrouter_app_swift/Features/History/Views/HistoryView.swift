@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HistoryView: View {
+    @Environment(\.modelContext) private var context
+    @Query(sort: \HistoryItem.createdAt, order: .reverse) private var histories: [HistoryItem]
+    
     enum HistorySection: String, CaseIterable, Identifiable {
         case today = "Today"
         case yesterday = "Yesterday"
@@ -16,60 +20,65 @@ struct HistoryView: View {
         var id: String { rawValue }
     }
 
-    struct HistoryItem: Identifiable {
-        let id = UUID()
-        let title: String
-        let lastMessage: String
-        let section: HistorySection
+    private var groupedItems: [HistorySection: [HistoryItem]] {
+        return Dictionary(grouping: histories, by: { section(for: $0.createdAt) })
     }
 
-    private let historyItems: [HistoryItem] = [
-        HistoryItem(
-            title: "React Native Debugging",
-            lastMessage: "Can you help me figure out why my FlatList isn't rendering items when I fetch data from an API?",
-            section: .today
-        ),
-        HistoryItem(
-            title: "API Endpoint Design",
-            lastMessage: "Review this REST API structure for a user management system and suggest improvements.",
-            section: .today
-        ),
-        HistoryItem(
-            title: "Dinner Recipes",
-            lastMessage: "I have chicken breasts, broccoli, and soy sauce. What's a quick 20-minute recipe?",
-            section: .yesterday
-        ),
-        HistoryItem(
-            title: "Email Draft: PTO Request",
-            lastMessage: "Draft a professional email to my manager requesting time off from October 12th to 18th.",
-            section: .lastWeek
-        ),
-        HistoryItem(
-            title: "Explain Quantum Computing",
-            lastMessage: "Explain the concept of quantum superposition as if I were a bright high-school student.",
-            section: .lastWeek
-        )
-    ]
-
-    private var groupedItems: [HistorySection: [HistoryItem]] {
-        Dictionary(grouping: historyItems, by: \.section)
+    private func section(for date: Date) -> HistorySection {
+        let calendar = Calendar.current
+        
+        if calendar.isDateInToday(date) {
+            return .today
+        }
+        if calendar.isDateInYesterday(date) {
+            return .yesterday
+        }
+        return .lastWeek
     }
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 24) {
-                    ForEach(HistorySection.allCases) { section in
-                        if let items = groupedItems[section], !items.isEmpty {
-                            ItemView(section.rawValue, items: items)
-                        }
-                    }
+            if histories.isEmpty {
+                VStack {
+                    Spacer()
+                    Text("No history yet.")
+                    Spacer()
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(UIColor.systemBackground))
+                .navigationTitle("History")
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 24) {
+                        ForEach(HistorySection.allCases) { section in
+                            if let items = groupedItems[section], !items.isEmpty {
+                                ItemView(section.rawValue, items: items)
+                            }
+                        }
+                        .onDelete(perform: { offset in
+                            for index in offset {
+                                let section = HistorySection.allCases[index]
+                                for item in groupedItems[section]! {
+                                    HistoryRepository.shared.deleteItem(item: item, in: context)
+                                }
+                            }
+                        })
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+                .background(Color(UIColor.systemBackground))
+                .navigationTitle("History")
+                .toolbar(content: {
+                    ToolbarItem(content: {
+                        Button( action: {
+                            HistoryRepository.shared.clearAllHistory(items: histories, in: context)
+                        }, label: {
+                            Text("Clear all history")
+                        })
+                    })
+                })
             }
-            .background(Color(UIColor.systemBackground))
-            .navigationTitle("History")
         }
     }
 

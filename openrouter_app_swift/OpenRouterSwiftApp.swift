@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct OpenRouterSwiftApp: App {
@@ -13,5 +14,6 @@ struct OpenRouterSwiftApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: HistoryItem.self)
     }
 }

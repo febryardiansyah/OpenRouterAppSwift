@@ -30,6 +30,7 @@ struct SettingsView: View {
         @State private var hasSavedKey = false
         @State private var showSuccessAlert = false
         @State private var showTestConnectionFailed = false
+        @State private var showTextConnectionSuccess = false
         
         @StateObject private var remainingCreditsViewModel = RemainingCreditsViewModel()
         
@@ -91,6 +92,10 @@ struct SettingsView: View {
                         Task {
                             await remainingCreditsViewModel.fetchRemainingCredits()
                             
+                            if remainingCreditsViewModel.data != nil {
+                                showTextConnectionSuccess = true
+                            }
+                            
                             if remainingCreditsViewModel.errorMessage != nil {
                                 showTestConnectionFailed = true
                             }
@@ -114,6 +119,11 @@ struct SettingsView: View {
                 }
             })
             .alert(remainingCreditsViewModel.errorMessage ?? "Test Connection Failed", isPresented: $showTestConnectionFailed, actions: {
+                Button("OK", role: .cancel) {
+                    
+                }
+            })
+            .alert("API key works fine!", isPresented: $showTextConnectionSuccess, actions: {
                 Button("OK", role: .cancel) {
                     
                 }
