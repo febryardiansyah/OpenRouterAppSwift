@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedTab = 0
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @StateObject private var appState = AppStateViewModel()
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $appState.selectedTab) {
             ChatView()
                 .tabItem {
                     Label("Chat", systemImage: "message")
@@ -23,6 +23,7 @@ struct ContentView: View {
                 .tag(2)
         }
         .preferredColorScheme(isDarkMode ? .dark : .light)
+        .environmentObject(appState)
     }
 }
 

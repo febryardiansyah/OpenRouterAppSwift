@@ -18,4 +18,16 @@ struct HistoryRepository {
     func deleteItem(item: HistoryItem, in context: ModelContext) {
         context.delete(item)
     }
+    
+    func updateItem(item: HistoryItem, lastMessage: String? = nil, selectedModel: PersistedAIModel? = nil, in context: ModelContext) throws {
+        if let lastMessage {
+            item.lastMessage = lastMessage
+        }
+        
+        if let selectedModel {
+            item.selectedModel = selectedModel
+        }
+        
+        try context.save()
+    }
 }

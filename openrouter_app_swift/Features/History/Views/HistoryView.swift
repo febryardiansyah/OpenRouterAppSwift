@@ -78,6 +78,8 @@ struct HistoryView: View {
     struct ItemView: View {
         let headerTitle: String
         let items: [HistoryItem]
+        
+        @EnvironmentObject private var appState: AppStateViewModel
 
         init(_ headerTitle: String, items: [HistoryItem]) {
             self.headerTitle = headerTitle
@@ -115,6 +117,10 @@ struct HistoryView: View {
                                 .padding(.top, 4)
                         }
                         .padding(16)
+                        .onTapGesture {
+                            appState.selectedTab = 0
+                            appState.historyItem = item
+                        }
 
                         if index < items.count - 1 {
                             Divider()

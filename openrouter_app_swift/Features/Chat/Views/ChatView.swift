@@ -14,6 +14,7 @@ struct ChatView: View {
     @State private var toast: ToastMessage? = nil
     
     @Environment(\.modelContext) private var context
+    @EnvironmentObject private var appState: AppStateViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -37,6 +38,9 @@ struct ChatView: View {
                 Image(systemName: "plus.message")
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(.blue)
+                    .onTapGesture {
+                        appState.historyItem = nil
+                    }
             }
             
             ScrollViewReader { proxy in
@@ -84,9 +88,16 @@ struct ChatView: View {
                 selectedModel: $selectedModel,
                 onClicked: { model in
                     selectedModel = model
+                    if let item = appState.historyItem {
+                        try? HistoryRepository.shared.updateItem(item: item, selectedModel: selectedModel?.toPersistedAIModel(), in: context)
+                    }
                 }
             )
             .presentationDetents([.large])
+        }
+        .onChange(of: appState.historyItem) {
+            selectedModel = appState.historyItem?.selectedModel.toAIModel()
+            print("ON_PAGE_CHANGED with \(selectedModel?.name ?? "nil")")
         }
     }
     
@@ -120,12 +131,19 @@ struct ChatView: View {
                 message
             )
             
-            await clarifyMessageViewModel.setTitle(for: chatMessages.first?.content ?? "Anything")
-            
-            if let title = clarifyMessageViewModel.title {
-                let historyItem = HistoryItem(title: title, lastMessage: message.content, modelId: selectedModelId)
+            if appState.historyItem == nil {
+                await clarifyMessageViewModel.setTitle(for: chatMessages.first?.content ?? "Anything")
                 
-                HistoryRepository.shared.logAction(item: historyItem, in: context)
+                if let title = clarifyMessageViewModel.title {
+                    let historyItem = HistoryItem(title: title, lastMessage: message.content, selectedModel: selectedModel!.toPersistedAIModel())
+                    
+                    HistoryRepository.shared.logAction(item: historyItem, in: context)
+                    appState.historyItem = historyItem
+                }
+            } else {
+                if let item = appState.historyItem {
+                    try? HistoryRepository.shared.updateItem(item: item, lastMessage: message.content,selectedModel: selectedModel?.toPersistedAIModel(), in: context)
+                }
             }
         }
         

@@ -15,3 +15,10 @@ struct AIModel: Identifiable, Codable {
 struct AIModelResponse: Codable {
     let data: [AIModel]
 }
+
+
+extension AIModel {
+    func toPersistedAIModel() -> PersistedAIModel {
+        PersistedAIModel(id: id, name: name, desc: description)
+    }
+}

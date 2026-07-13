@@ -18,8 +18,10 @@ final class AIModelViewModel: ObservableObject {
         errorMessage = nil
         do {
             modelList = try await chatService.fetchModels(query: query)
+        } catch let error as APIError {
+            errorMessage = "Failed to fetch: \(error.parse())"
         } catch {
-            errorMessage = "Failed to fetch \(error)"
+            errorMessage = "Failed to fetch: \(error)"
         }
         isLoading = false
     }
