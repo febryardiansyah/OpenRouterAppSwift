@@ -97,7 +97,16 @@ struct ChatView: View {
         }
         .onChange(of: appState.historyItem) {
             selectedModel = appState.historyItem?.selectedModel.toAIModel()
-            print("ON_PAGE_CHANGED with \(selectedModel?.name ?? "nil")")
+            
+            guard let _ = appState.historyItem else {
+                chatMessages = []
+                return
+            }
+            
+            let sorted = appState.historyItem!.messages.sorted {$0.createdAt < $1.createdAt }
+            chatMessages = sorted.map { item in
+                ChatMessage(content: item.content, role: item.role)
+            }
         }
     }
     
@@ -105,8 +114,6 @@ struct ChatView: View {
         chatMessages.append(
             ChatMessage(content: inputText, role: "user")
         )
-        
-        inputText = ""
         
         guard let selectedModelId = selectedModel?.id else {
             toast = ToastMessage(icon: "exclamationmark.triangle.fill", message: "You have to choose model first", tint: .secondary)
@@ -123,6 +130,27 @@ struct ChatView: View {
             ChatMessage(content: "Answering..", role: "assistant")
         )
         
+        let historyItem: HistoryItem
+        
+        if let existing = appState.historyItem {
+            historyItem = existing
+        } else {
+            await clarifyMessageViewModel.setTitle(for: chatMessages.first?.content ?? "New Chat")
+            let title = clarifyMessageViewModel.title ?? "New Chat"
+            
+            let newHistoryItem = HistoryItem(title: title, lastMessage: inputText, selectedModel: selectedModel!.toPersistedAIModel())
+            
+            HistoryRepository.shared.logAction(item: newHistoryItem, in: context)
+            historyItem = newHistoryItem
+            appState.historyItem = historyItem
+        }
+        
+        let userPersisted = PersistedChatMessage(content: inputText, role: "user", historyItem: historyItem)
+        context.insert(userPersisted)
+        try? context.save()
+        
+        inputText = ""
+        
         await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
         
         if let message = sendMessageViewModel.data?.message {
@@ -131,20 +159,10 @@ struct ChatView: View {
                 message
             )
             
-            if appState.historyItem == nil {
-                await clarifyMessageViewModel.setTitle(for: chatMessages.first?.content ?? "Anything")
-                
-                if let title = clarifyMessageViewModel.title {
-                    let historyItem = HistoryItem(title: title, lastMessage: message.content, selectedModel: selectedModel!.toPersistedAIModel())
-                    
-                    HistoryRepository.shared.logAction(item: historyItem, in: context)
-                    appState.historyItem = historyItem
-                }
-            } else {
-                if let item = appState.historyItem {
-                    try? HistoryRepository.shared.updateItem(item: item, lastMessage: message.content,selectedModel: selectedModel?.toPersistedAIModel(), in: context)
-                }
-            }
+            let botPersisted = PersistedChatMessage(content: message.content, role: "asistant", historyItem: historyItem)
+            context.insert(botPersisted)
+            historyItem.lastMessage = message.content
+            try? context.save()
         }
         
         if let error = sendMessageViewModel.errorMessage {
@@ -152,6 +170,11 @@ struct ChatView: View {
             chatMessages.append(
                 ChatMessage(content: "\(error)", role: "assistant")
             )
+            
+            let botPersisted = PersistedChatMessage(content: error, role: "asistant", historyItem: historyItem)
+            context.insert(botPersisted)
+            historyItem.lastMessage = error
+            try? context.save()
             print("\(error)")
         }
     }

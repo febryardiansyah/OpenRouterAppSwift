@@ -8,6 +8,7 @@ class HistoryItem: Identifiable {
     var lastMessage: String
     var selectedModel: PersistedAIModel
     var createdAt: Date
+    @Relationship(deleteRule: .cascade) var messages: [PersistedChatMessage] = []
     
     init(title: String, lastMessage: String, selectedModel: PersistedAIModel) {
         self.id = UUID()

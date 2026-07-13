@@ -4,6 +4,7 @@ import SwiftData
 struct HistoryView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \HistoryItem.createdAt, order: .reverse) private var histories: [HistoryItem]
+    @EnvironmentObject var appState: AppStateViewModel
     
     enum HistorySection: String, CaseIterable, Identifiable {
         case today = "Today"
@@ -66,6 +67,7 @@ struct HistoryView: View {
                     ToolbarItem(content: {
                         Button( action: {
                             HistoryRepository.shared.clearAllHistory(items: histories, in: context)
+                            appState.historyItem = nil
                         }, label: {
                             Text("Clear all history")
                         })
