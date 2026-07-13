@@ -55,6 +55,13 @@ struct ChatView: View {
                         }
                     }
                 }
+                .onAppear {
+                    withAnimation {
+                        if let lastId = chatMessages.last?.id {
+                            proxy.scrollTo(lastId, anchor: .bottom)
+                        }
+                    }
+                }
                 
                 HStack {
                     Image(systemName: "plus")
@@ -154,7 +161,7 @@ struct ChatView: View {
         await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
         
         if let message = sendMessageViewModel.data?.message {
-            chatMessages.remove(at: chatMessages.count - 1)
+//            chatMessages.remove(at: chatMessages.count - 1)
             chatMessages.append(
                 message
             )
