@@ -42,25 +42,29 @@ struct HistoryView: View {
                 .background(Color(UIColor.systemBackground))
                 .navigationTitle("History")
             } else {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 24) {
-                        ForEach(HistorySection.allCases) { section in
-                            if let items = groupedItems[section], !items.isEmpty {
-                                ItemView(section.rawValue, items: items)
+                List {
+                    ForEach(HistorySection.allCases) { section in
+                        if let items = groupedItems[section], !items.isEmpty {
+                            Section {
+                                ForEach(items) { item in
+                                    RowView(item: item)
+                                }
+                                .onDelete { offsets in
+                                    for index in offsets {
+                                        let item = items[index]
+                                        HistoryRepository.shared.deleteItem(item: item, in: context)
+                                    }
+                                }
+                            } header: {
+                                Text(section.rawValue)
+                                    .font(.title3.weight(.semibold))
+                                    .foregroundStyle(.secondary)
                             }
                         }
-                        .onDelete(perform: { offset in
-                            for index in offset {
-                                let section = HistorySection.allCases[index]
-                                for item in groupedItems[section]! {
-                                    HistoryRepository.shared.deleteItem(item: item, in: context)
-                                }
-                            }
-                        })
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
                 }
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
                 .background(Color(UIColor.systemBackground))
                 .navigationTitle("History")
                 .toolbar(content: {
@@ -77,63 +81,37 @@ struct HistoryView: View {
         }
     }
 
-    struct ItemView: View {
-        let headerTitle: String
-        let items: [HistoryItem]
-        
+    struct RowView: View {
+        let item: HistoryItem
+
         @EnvironmentObject private var appState: AppStateViewModel
 
-        init(_ headerTitle: String, items: [HistoryItem]) {
-            self.headerTitle = headerTitle
-            self.items = items
-        }
-
         var body: some View {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(headerTitle)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.secondary)
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
 
-                VStack(spacing: 0) {
-                    ForEach(items.indices, id: \.self) { index in
-                        let item = items[index]
-
-                        HStack(alignment: .top, spacing: 12) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(item.title)
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
-                                    .lineLimit(1)
-
-                                Text(item.lastMessage)
-                                    .font(.body)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(2)
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.footnote.weight(.semibold))
-                                .foregroundStyle(.tertiary)
-                                .padding(.top, 4)
-                        }
-                        .padding(16)
-                        .onTapGesture {
-                            appState.selectedTab = 0
-                            appState.historyItem = item
-                        }
-
-                        if index < items.count - 1 {
-                            Divider()
-                                .padding(.leading, 16)
-                        }
-                    }
+                    Text(item.lastMessage)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color(UIColor.secondarySystemBackground))
-                )
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+                    .padding(.top, 4)
+            }
+            .padding(.vertical, 8)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                appState.selectedTab = 0
+                appState.historyItem = item
             }
         }
     }
