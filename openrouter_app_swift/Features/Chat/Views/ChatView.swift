@@ -44,23 +44,30 @@ struct ChatView: View {
             }
             
             ScrollViewReader { proxy in
-                ScrollView {
-                    VStack (spacing: 16) {
-                        ForEach(chatMessages) { chat in
-                            if chat.role != "user" {
-                                BotChatView(chat.content)
-                            } else {
-                                UserChatView(chat.content)
+                if !chatMessages.isEmpty {
+                    ScrollView {
+                        VStack (spacing: 16) {
+                            ForEach(chatMessages) { chat in
+                                if chat.role != "user" {
+                                    BotChatView(chat.content)
+                                } else {
+                                    UserChatView(chat.content)
+                                }
                             }
                         }
                     }
-                }
-                .onAppear {
-                    withAnimation {
-                        if let lastId = chatMessages.last?.id {
-                            proxy.scrollTo(lastId, anchor: .bottom)
+                    .onAppear {
+                        withAnimation {
+                            if let lastId = chatMessages.last?.id {
+                                proxy.scrollTo(lastId, anchor: .bottom)
+                            }
                         }
                     }
+                } else {
+                    Text("Start chatting..")
+                        .frame(maxHeight: .infinity)
+                        .font(.subheadline.italic())
+                        .foregroundStyle(.foreground)
                 }
                 
                 HStack {
@@ -147,9 +154,9 @@ struct ChatView: View {
             
             let newHistoryItem = HistoryItem(title: title, lastMessage: inputText, selectedModel: selectedModel!.toPersistedAIModel())
             
-            HistoryRepository.shared.logAction(item: newHistoryItem, in: context)
+//            HistoryRepository.shared.logAction(item: newHistoryItem, in: context)
             historyItem = newHistoryItem
-            appState.historyItem = historyItem
+//            appState.historyItem = historyItem
         }
         
         let userPersisted = PersistedChatMessage(content: inputText, role: "user", historyItem: historyItem)
@@ -161,7 +168,7 @@ struct ChatView: View {
         await sendMessageViewModel.sendMessage(chatRequest: chatRequest)
         
         if let message = sendMessageViewModel.data?.message {
-//            chatMessages.remove(at: chatMessages.count - 1)
+            chatMessages.remove(at: chatMessages.count - 1)
             chatMessages.append(
                 message
             )
@@ -183,6 +190,10 @@ struct ChatView: View {
             historyItem.lastMessage = error
             try? context.save()
             print("\(error)")
+        }
+        
+        if appState.historyItem == nil {
+            appState.historyItem = historyItem
         }
     }
     
@@ -365,5 +376,7 @@ private struct BottomSheetContentView: View {
 }
 
 #Preview {
+    @Previewable @StateObject var appState = AppStateViewModel()
     ChatView()
+        .environmentObject(appState)
 }
