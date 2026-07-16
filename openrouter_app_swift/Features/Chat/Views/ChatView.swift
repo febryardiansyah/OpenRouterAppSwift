@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct ChatView: View {
     @State var inputText = ""
@@ -7,6 +8,9 @@ struct ChatView: View {
     @State var selectedModel: AIModel? = nil
     
     @State var chatMessages: [ChatMessage] = []
+    
+    @State var showFilePicker = false
+    @State var selectedFile = ""
     
     @StateObject private var sendMessageViewModel = SendMessageViewModel()
     @StateObject private var clarifyMessageViewModel = ClarifyMessageTitleViewModel()
@@ -73,6 +77,9 @@ struct ChatView: View {
                 HStack {
                     Image(systemName: "plus")
                         .padding(.trailing)
+                        .onTapGesture {
+                            showFilePicker.toggle()
+                        }
                     TextField("",text: $inputText, prompt: Text("What's your thoughts"))
                         .onSubmit {
                             Task {
@@ -85,8 +92,19 @@ struct ChatView: View {
                                 }
                             }
                         }
-                    Image(systemName: "microphone")
+                    Image(systemName: "paperplane")
                         .padding(.leading)
+                        .onTapGesture {
+                            Task {
+                                await sendMessage()
+                            }
+                            
+                            withAnimation {
+                                if let lastId = chatMessages.last?.id {
+                                    proxy.scrollTo(lastId, anchor: .bottom)
+                                }
+                            }
+                        }
                 }
                 .padding()
                 .background(
@@ -97,6 +115,20 @@ struct ChatView: View {
         }
         .padding()
         .showToast(toast: $toast)
+        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.directory]) { result in
+            switch result {
+            case .success(let url):
+                guard url.startAccessingSecurityScopedResource() else {
+                    return
+                }
+
+                selectedFile = url.lastPathComponent
+                
+                url.stopAccessingSecurityScopedResource()
+            case .failure(let error):
+                print("Failed to pick file \(error)")
+            }
+        }
         .sheet(isPresented: $showSheet) {
             BottomSheetContentView(
                 selectedModel: $selectedModel,

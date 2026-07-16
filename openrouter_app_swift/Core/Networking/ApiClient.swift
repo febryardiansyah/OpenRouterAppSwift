@@ -38,7 +38,6 @@ class ApiClient {
         request.httpMethod = method.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-//        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
         
         print("REQUEST \(method.rawValue) | ENDPOINT \(endpoint)")
         
