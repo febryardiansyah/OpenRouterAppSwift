@@ -1,5 +1,6 @@
 import Combine
 
+@MainActor
 final class ModelDetailViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var data: AIModelDetail?
