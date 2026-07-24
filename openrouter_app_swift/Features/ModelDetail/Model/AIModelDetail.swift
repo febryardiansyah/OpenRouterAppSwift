@@ -7,7 +7,7 @@ struct AIModelDetail: Codable {
     let description: String
     let architecture: Architecture
     let contextLength: Int
-    let created: Date
+    let created: Int
     
     struct Pricing: Codable {
         let completion: String?
