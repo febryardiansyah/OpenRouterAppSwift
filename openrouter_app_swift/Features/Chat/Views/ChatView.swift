@@ -130,15 +130,17 @@ struct ChatView: View {
             }
         }
         .sheet(isPresented: $showSheet) {
-            BottomSheetContentView(
-                selectedModel: $selectedModel,
-                onClicked: { model in
-                    selectedModel = model
-                    if let item = appState.historyItem {
-                        try? HistoryRepository.shared.updateItem(item: item, selectedModel: selectedModel?.toPersistedAIModel(), in: context)
+            NavigationStack {
+                BottomSheetContentView(
+                    selectedModel: $selectedModel,
+                    onClicked: { model in
+                        selectedModel = model
+                        if let item = appState.historyItem {
+                            try? HistoryRepository.shared.updateItem(item: item, selectedModel: selectedModel?.toPersistedAIModel(), in: context)
+                        }
                     }
-                }
-            )
+                )
+            }
             .presentationDetents([.large])
         }
         .onChange(of: appState.historyItem) {
@@ -330,6 +332,7 @@ private struct BottomSheetContentView: View {
                     name: model.name,
                     description: model.description,
                     isSelected: true,
+                    id: model.id
                 )
                 .onTapGesture {
                     selectedModel = nil
@@ -350,7 +353,8 @@ private struct BottomSheetContentView: View {
                                 ModelItem(
                                     name: item.name,
                                     description: item.description,
-                                    isSelected: selectedModel?.id == item.id
+                                    isSelected: selectedModel?.id == item.id,
+                                    id: item.id
                                 )
                                 .onTapGesture {
                                     selectedModel = item
@@ -374,6 +378,7 @@ private struct BottomSheetContentView: View {
         let name: String
         let description: String
         let isSelected: Bool
+        let id: String
         
         var body: some View {
             HStack {
@@ -390,6 +395,15 @@ private struct BottomSheetContentView: View {
                         .font(.subheadline)
                         .foregroundStyle(.gray)
                         .lineLimit(2)
+                    
+                    NavigationLink("Detail") {
+                        let author = id.split(separator: "/").first ?? "unknown"
+                        let slug = id.split(separator: "/").last ?? "unknown"
+                        
+                        ModelDetailView(
+                            author: String(author), slug: String(slug)
+                        )
+                    }
                 }
                 Spacer()
                 if isSelected {

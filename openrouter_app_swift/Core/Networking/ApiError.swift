@@ -21,7 +21,7 @@ extension APIError {
     }
 }
 
-func HandleApiError(_ error: APIError) -> String {
+private func HandleApiError(_ error: APIError) -> String {
     switch error {
     case .invalidUrl:
         return "Invalid Url"
