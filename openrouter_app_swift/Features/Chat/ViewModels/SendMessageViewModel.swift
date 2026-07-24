@@ -21,7 +21,7 @@ final class SendMessageViewModel: ObservableObject {
             
             self.data = response.choices.first
         } catch let error as APIError {
-            errorMessage = HandleApiError(error)
+            errorMessage = error.parse()
         } catch {
             errorMessage = "Failed to send message \(error)"
         }

@@ -30,14 +30,14 @@ class ApiClient {
             throw APIError.invalidUrl
         }
         
-        guard let apiKey = KeyChainManager.shared.getApiKey() else {
-            throw APIError.apiKeyNotFound
-        }
+//        guard let apiKey = KeyChainManager.shared.getApiKey() else {
+//            throw APIError.apiKeyNotFound
+//        }
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+//        request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         
         print("REQUEST \(method.rawValue) | ENDPOINT \(endpoint)")
         
