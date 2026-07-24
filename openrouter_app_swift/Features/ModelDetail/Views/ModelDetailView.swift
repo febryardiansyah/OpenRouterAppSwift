@@ -75,9 +75,9 @@ struct ModelDetailView: View {
                                 .font(.callout)
                         }
                         HStack {
-                            Text("")
-                                .font(.system(size: 18))
+                            Color.clear
                                 .frame(width: 32, height: 32)
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading) {
                                 if let completion = data.pricing.completion {
                                     Text("$\(completion)")
