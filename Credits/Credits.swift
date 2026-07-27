@@ -14,21 +14,6 @@ import UIKit
 import AppKit
 #endif
 
-struct RemainingCredit: Codable {
-    let totalCredits: Double
-    let totalUsage: Double
-    
-    enum CodingKeys: String, CodingKey {
-        case totalCredits = "total_credits"
-        case totalUsage = "total_usage"
-    }
-}
-
-struct RemainingCreditResponse: Codable {
-    let data: RemainingCredit
-}
-
-
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> CreditsEntry {
         CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date())
@@ -118,7 +103,7 @@ struct CreditsEntryView : View {
                     Spacer(minLength: 0)
                 }
 
-                Text(entry.errorMessage ?? "$\(entry.totalCredits.formatNumber())")
+                Text(entry.errorMessage ?? "$\(entry.totalCredits.formattedCredit)")
                     .font(.system(size: entry.errorMessage != nil ? 12 : 26, weight: .bold))
                     .foregroundColor(.primary)
                     .lineLimit(1)
@@ -132,7 +117,7 @@ struct CreditsEntryView : View {
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
-                        Text("$\(entry.totalUsage.formatNumber())")
+                        Text("$\(entry.totalUsage.formattedCredit)")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.primary)
                             .lineLimit(1)
@@ -146,7 +131,7 @@ struct CreditsEntryView : View {
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
                             .lineLimit(1)
-                        Text("$\((entry.totalCredits - entry.totalUsage).formatNumber())")
+                        Text("$\((entry.totalCredits - entry.totalUsage).formattedCredit)")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
                             .lineLimit(1)
@@ -196,16 +181,6 @@ struct Credits: Widget {
         .supportedFamilies([
             .systemSmall
         ])
-    }
-}
-
-extension Double {
-    func formatNumber() -> String {
-        let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        formatter.usesGroupingSeparator = true
-        return formatter.string(from: NSNumber(value: self)) ?? "0.00"
     }
 }
 

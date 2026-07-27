@@ -63,6 +63,13 @@
 			);
 			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
 		};
+		DB56B054301756800039F468 /* Exceptions for "openrouter_app_swift" folder in "CreditsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Settings/Models/RemainingCredit.swift,
+			);
+			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +91,9 @@
 		};
 		DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB56B054301756800039F468 /* Exceptions for "openrouter_app_swift" folder in "CreditsExtension" target */,
+			);
 			path = openrouter_app_swift;
 			sourceTree = "<group>";
 		};
