@@ -8,6 +8,21 @@
 import WidgetKit
 import SwiftUI
 
+struct RemainingCredit: Codable {
+    let totalCredits: Double
+    let totalUsage: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case totalCredits = "total_credits"
+        case totalUsage = "total_usage"
+    }
+}
+
+struct RemainingCreditResponse: Codable {
+    let data: RemainingCredit
+}
+
+
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> CreditsEntry {
         CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date())
@@ -19,18 +34,29 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [CreditsEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
-            entries.append(entry)
+//        var entries: [CreditsEntry] = []
+        
+        guard KeyChainManager.shared.getApiKey() != nil else {
+            let entry = CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date(), errorMessage: "API key not valid")
+            let timeline = Timeline(entries: [entry], policy: .never)
+            completion(timeline)
+            return
         }
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+        Task {
+            do {
+                let response: RemainingCreditResponse = try await ApiClient.shared.request(endpoint: "credits")
+                let entry = CreditsEntry(totalCredits: response.data.totalCredits, totalUsage: response.data.totalUsage, date: Date())
+                let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
+                let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
+                
+                completion(timeline)
+            } catch {
+                let entry = CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date(), errorMessage: error.localizedDescription)
+                let timeline = Timeline(entries: [entry], policy: .never)
+                completion(timeline)
+            }
+        }
     }
 
 //    func relevances() async -> WidgetRelevances<Void> {
@@ -42,6 +68,14 @@ struct CreditsEntry: TimelineEntry {
     let totalCredits: Double
     let totalUsage: Double
     let date: Date
+    let errorMessage: String?
+    
+    init(totalCredits: Double, totalUsage: Double, date: Date, errorMessage: String? = nil) {
+        self.totalCredits = totalCredits
+        self.totalUsage = totalUsage
+        self.date = date
+        self.errorMessage = errorMessage
+    }
 }
 
 struct CreditsEntryView : View {
@@ -78,8 +112,8 @@ struct CreditsEntryView : View {
                     Spacer(minLength: 0)
                 }
 
-                Text("$2.00")
-                    .font(.system(size: 26, weight: .bold))
+                Text(entry.errorMessage ?? "$\(entry.totalCredits.formatNumber())")
+                    .font(.system(size: entry.errorMessage != nil ? 12 : 26, weight: .bold))
                     .foregroundColor(Color(.label))
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
@@ -92,7 +126,7 @@ struct CreditsEntryView : View {
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(Color(.secondaryLabel))
                             .lineLimit(1)
-                        Text("$1.24")
+                        Text("$\(entry.totalUsage.formatNumber())")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(Color(.label))
                             .lineLimit(1)
@@ -106,7 +140,7 @@ struct CreditsEntryView : View {
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
                             .lineLimit(1)
-                        Text("$0.76")
+                        Text("$\((entry.totalCredits - entry.totalUsage).formatNumber())")
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
                             .lineLimit(1)
@@ -141,11 +175,21 @@ struct Credits: Widget {
                     .background()
             }
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("OpenRouter Credit Widget")
+        .description("Show OpenRouter credit usage")
         .supportedFamilies([
             .systemSmall
         ])
+    }
+}
+
+extension Double {
+    func formatNumber() -> String {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        formatter.usesGroupingSeparator = true
+        return formatter.string(from: NSNumber(value: self)) ?? "0.00"
     }
 }
 
@@ -153,5 +197,5 @@ struct Credits: Widget {
     Credits()
 } timeline: {
     CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
-    CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
+    CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date(), errorMessage: "API key is not valid")
 }

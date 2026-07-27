@@ -10,6 +10,7 @@
 		DB56AF533016FCFB0039F468 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F243016FC090041EF05 /* WidgetKit.framework */; };
 		DB56AF543016FCFB0039F468 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F263016FC090041EF05 /* SwiftUI.framework */; };
 		DB56AF613016FCFC0039F468 /* CreditsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DB56AF8B301734490039F468 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = DB56AF8A301734490039F468 /* KeychainAccess */; };
 		DB90B7C62FFD002000DE1F68 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = DB90B7C52FFD002000DE1F68 /* KeychainAccess */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		DB0D6F243016FC090041EF05 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DB0D6F263016FC090041EF05 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		DB56AF523016FCFB0039F468 /* CreditsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CreditsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB56AF89301731ED0039F468 /* CreditsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CreditsExtension.entitlements; sourceTree = "<group>"; };
 		DB78EC2C2FF53C5200D47287 /* openrouter_app_swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = openrouter_app_swift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -49,6 +51,15 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+			);
+			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
+		};
+		DB56AF8530171A140039F468 /* Exceptions for "Core" folder in "CreditsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Networking/ApiClient.swift,
+				Networking/ApiError.swift,
+				Services/KeyChainManager.swift,
 			);
 			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
 		};
@@ -65,6 +76,9 @@
 		};
 		DB56AF74301701F50039F468 /* Core */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB56AF8530171A140039F468 /* Exceptions for "Core" folder in "CreditsExtension" target */,
+			);
 			path = Core;
 			sourceTree = "<group>";
 		};
@@ -82,6 +96,7 @@
 			files = (
 				DB56AF543016FCFB0039F468 /* SwiftUI.framework in Frameworks */,
 				DB56AF533016FCFB0039F468 /* WidgetKit.framework in Frameworks */,
+				DB56AF8B301734490039F468 /* KeychainAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +123,7 @@
 		DB78EC232FF53C5200D47287 = {
 			isa = PBXGroup;
 			children = (
+				DB56AF89301731ED0039F468 /* CreditsExtension.entitlements */,
 				DB56AF74301701F50039F468 /* Core */,
 				DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */,
 				DB56AF553016FCFB0039F468 /* Credits */,
@@ -145,6 +161,7 @@
 			);
 			name = CreditsExtension;
 			packageProductDependencies = (
+				DB56AF8A301734490039F468 /* KeychainAccess */,
 			);
 			productName = CreditsExtension;
 			productReference = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */;
@@ -265,6 +282,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CreditsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U496PJH398;
@@ -297,6 +315,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = CreditsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U496PJH398;
@@ -444,6 +463,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = openrouter_app_swift/openrouter_app_swift.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U496PJH398;
@@ -488,6 +508,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = openrouter_app_swift/openrouter_app_swift.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U496PJH398;
@@ -571,6 +592,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DB56AF8A301734490039F468 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB90B7C42FFD002000DE1F68 /* XCRemoteSwiftPackageReference "keychainaccess" */;
+			productName = KeychainAccess;
+		};
 		DB90B7C52FFD002000DE1F68 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB90B7C42FFD002000DE1F68 /* XCRemoteSwiftPackageReference "keychainaccess" */;
