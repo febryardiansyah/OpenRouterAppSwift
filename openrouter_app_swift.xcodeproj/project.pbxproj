@@ -7,14 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB56AF533016FCFB0039F468 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F243016FC090041EF05 /* WidgetKit.framework */; };
+		DB56AF543016FCFB0039F468 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F263016FC090041EF05 /* SwiftUI.framework */; };
+		DB56AF613016FCFC0039F468 /* CreditsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DB90B7C62FFD002000DE1F68 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = DB90B7C52FFD002000DE1F68 /* KeychainAccess */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DB56AF5F3016FCFC0039F468 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB78EC242FF53C5200D47287 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB56AF513016FCFB0039F468;
+			remoteInfo = CreditsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DB0D6F3D3016FC0A0041EF05 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DB56AF613016FCFC0039F468 /* CreditsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		DB0D6F243016FC090041EF05 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		DB0D6F263016FC090041EF05 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		DB56AF523016FCFB0039F468 /* CreditsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CreditsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB78EC2C2FF53C5200D47287 /* openrouter_app_swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = openrouter_app_swift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DB56AF623016FCFC0039F468 /* Exceptions for "Credits" folder in "CreditsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		DB56AF553016FCFB0039F468 /* Credits */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB56AF623016FCFC0039F468 /* Exceptions for "Credits" folder in "CreditsExtension" target */,
+			);
+			path = Credits;
+			sourceTree = "<group>";
+		};
 		DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = openrouter_app_swift;
@@ -23,6 +71,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DB56AF4F3016FCFB0039F468 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB56AF543016FCFB0039F468 /* SwiftUI.framework in Frameworks */,
+				DB56AF533016FCFB0039F468 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DB78EC292FF53C5200D47287 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -34,10 +91,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB0D6F233016FC090041EF05 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DB0D6F243016FC090041EF05 /* WidgetKit.framework */,
+				DB0D6F263016FC090041EF05 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DB78EC232FF53C5200D47287 = {
 			isa = PBXGroup;
 			children = (
 				DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */,
+				DB56AF553016FCFB0039F468 /* Credits */,
+				DB0D6F233016FC090041EF05 /* Frameworks */,
 				DB78EC2D2FF53C5200D47287 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				DB78EC2C2FF53C5200D47287 /* openrouter_app_swift.app */,
+				DB56AF523016FCFB0039F468 /* CreditsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,6 +122,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DB56AF513016FCFB0039F468 /* CreditsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB56AF633016FCFC0039F468 /* Build configuration list for PBXNativeTarget "CreditsExtension" */;
+			buildPhases = (
+				DB56AF4E3016FCFB0039F468 /* Sources */,
+				DB56AF4F3016FCFB0039F468 /* Frameworks */,
+				DB56AF503016FCFB0039F468 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DB56AF553016FCFB0039F468 /* Credits */,
+			);
+			name = CreditsExtension;
+			packageProductDependencies = (
+			);
+			productName = CreditsExtension;
+			productReference = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		DB78EC2B2FF53C5200D47287 /* openrouter_app_swift */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB78EC372FF53C5400D47287 /* Build configuration list for PBXNativeTarget "openrouter_app_swift" */;
@@ -60,10 +151,12 @@
 				DB78EC282FF53C5200D47287 /* Sources */,
 				DB78EC292FF53C5200D47287 /* Frameworks */,
 				DB78EC2A2FF53C5200D47287 /* Resources */,
+				DB0D6F3D3016FC0A0041EF05 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DB56AF603016FCFC0039F468 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */,
@@ -83,9 +176,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2640;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					DB56AF513016FCFB0039F468 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					DB78EC2B2FF53C5200D47287 = {
 						CreatedOnToolsVersion = 26.4;
 					};
@@ -109,11 +205,19 @@
 			projectRoot = "";
 			targets = (
 				DB78EC2B2FF53C5200D47287 /* openrouter_app_swift */,
+				DB56AF513016FCFB0039F468 /* CreditsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DB56AF503016FCFB0039F468 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DB78EC2A2FF53C5200D47287 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,6 +228,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DB56AF4E3016FCFB0039F468 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DB78EC282FF53C5200D47287 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,7 +244,80 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DB56AF603016FCFC0039F468 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
+			targetProxy = DB56AF5F3016FCFC0039F468 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		DB56AF643016FCFC0039F468 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U496PJH398;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Credits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Credits;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.febryards.openrouterapp.Credits;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DB56AF653016FCFC0039F468 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U496PJH398;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Credits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Credits;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.febryards.openrouterapp.Credits;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		DB78EC352FF53C5400D47287 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -255,6 +439,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U496PJH398;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
@@ -297,6 +482,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U496PJH398;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
@@ -335,6 +521,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DB56AF633016FCFC0039F468 /* Build configuration list for PBXNativeTarget "CreditsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB56AF643016FCFC0039F468 /* Debug */,
+				DB56AF653016FCFC0039F468 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DB78EC272FF53C5200D47287 /* Build configuration list for PBXProject "openrouter_app_swift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
