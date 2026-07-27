@@ -10,8 +10,10 @@ import SwiftUI
 
 @main
 struct CreditsBundle: WidgetBundle {
+    @WidgetBundleBuilder
     var body: some Widget {
-        Credits()
-        CreditsLiveActivity()
+        WidgetBundleBuilder.buildBlock(Credits())
+//        Credits()
+//        CreditsLiveActivity()
     }
 }

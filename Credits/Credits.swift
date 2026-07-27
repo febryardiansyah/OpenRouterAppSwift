@@ -9,23 +9,23 @@ import WidgetKit
 import SwiftUI
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+    func placeholder(in context: Context) -> CreditsEntry {
+        CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date())
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
+    func getSnapshot(in context: Context, completion: @escaping (CreditsEntry) -> ()) {
+        let entry = CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
+        var entries: [CreditsEntry] = []
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
         for hourOffset in 0 ..< 5 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
+            let entry = CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
             entries.append(entry)
         }
 
@@ -38,9 +38,10 @@ struct Provider: TimelineProvider {
 //    }
 }
 
-struct SimpleEntry: TimelineEntry {
+struct CreditsEntry: TimelineEntry {
+    let totalCredits: Double
+    let totalUsage: Double
     let date: Date
-    let emoji: String
 }
 
 struct CreditsEntryView : View {
@@ -63,7 +64,7 @@ struct CreditsEntryView : View {
                     .frame(width: 32, height: 32)
 
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("Openrouter")
+                        Text("OpenRouter")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(Color(.label))
                             .lineLimit(1)
@@ -142,12 +143,15 @@ struct Credits: Widget {
         }
         .configurationDisplayName("My Widget")
         .description("This is an example widget.")
+        .supportedFamilies([
+            .systemSmall
+        ])
     }
 }
 
 #Preview(as: .systemSmall) {
     Credits()
 } timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
+    CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
 }

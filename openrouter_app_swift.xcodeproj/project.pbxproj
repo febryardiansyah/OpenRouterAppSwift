@@ -63,6 +63,11 @@
 			path = Credits;
 			sourceTree = "<group>";
 		};
+		DB56AF74301701F50039F468 /* Core */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Core;
+			sourceTree = "<group>";
+		};
 		DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = openrouter_app_swift;
@@ -103,6 +108,7 @@
 		DB78EC232FF53C5200D47287 = {
 			isa = PBXGroup;
 			children = (
+				DB56AF74301701F50039F468 /* Core */,
 				DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */,
 				DB56AF553016FCFB0039F468 /* Credits */,
 				DB0D6F233016FC090041EF05 /* Frameworks */,
@@ -159,6 +165,7 @@
 				DB56AF603016FCFC0039F468 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				DB56AF74301701F50039F468 /* Core */,
 				DB78EC2E2FF53C5200D47287 /* openrouter_app_swift */,
 			);
 			name = openrouter_app_swift;
@@ -265,7 +272,7 @@
 				INFOPLIST_FILE = Credits/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Credits;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -297,7 +304,7 @@
 				INFOPLIST_FILE = Credits/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Credits;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -444,6 +451,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenRouter App";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -487,6 +495,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "OpenRouter App";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
