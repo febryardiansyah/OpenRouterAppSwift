@@ -108,7 +108,7 @@ struct ModelDetailView: View {
             }
         }
         .padding(.horizontal)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.appSystemBackground)
         .task {
             await viewModel.fetchModelDetail(author: author, slug: slug)
         }

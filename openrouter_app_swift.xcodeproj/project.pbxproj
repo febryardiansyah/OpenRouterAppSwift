@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		DB56AF533016FCFB0039F468 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F243016FC090041EF05 /* WidgetKit.framework */; };
 		DB56AF543016FCFB0039F468 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB0D6F263016FC090041EF05 /* SwiftUI.framework */; };
-		DB56AF613016FCFC0039F468 /* CreditsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DB56AF613016FCFC0039F468 /* CreditsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB56AF523016FCFB0039F468 /* CreditsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DB56AF8B301734490039F468 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = DB56AF8A301734490039F468 /* KeychainAccess */; };
 		DB90B7C62FFD002000DE1F68 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = DB90B7C52FFD002000DE1F68 /* KeychainAccess */; };
 /* End PBXBuildFile section */
@@ -271,6 +271,7 @@
 /* Begin PBXTargetDependency section */
 		DB56AF603016FCFC0039F468 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = DB56AF513016FCFB0039F468 /* CreditsExtension */;
 			targetProxy = DB56AF5F3016FCFC0039F468 /* PBXContainerItemProxy */;
 		};
@@ -488,6 +489,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.febryards.openrouterapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.febryards.openroutermacapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.febryards.openroutermacapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = com.febryards.openroutermacapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -533,6 +537,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.febryards.openrouterapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.febryards.openroutermacapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.febryards.openroutermacapp;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = com.febryards.openroutermacapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;

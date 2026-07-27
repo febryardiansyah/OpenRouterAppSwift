@@ -8,6 +8,12 @@
 import WidgetKit
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
+
 struct RemainingCredit: Codable {
     let totalCredits: Double
     let totalUsage: Double
@@ -100,12 +106,12 @@ struct CreditsEntryView : View {
                     VStack(alignment: .leading, spacing: 1) {
                         Text("OpenRouter")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(.label))
+                            .foregroundColor(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                         Text("Total Credits")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(Color(.secondaryLabel))
+                            .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
 
@@ -114,7 +120,7 @@ struct CreditsEntryView : View {
 
                 Text(entry.errorMessage ?? "$\(entry.totalCredits.formatNumber())")
                     .font(.system(size: entry.errorMessage != nil ? 12 : 26, weight: .bold))
-                    .foregroundColor(Color(.label))
+                    .foregroundColor(.primary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
@@ -124,11 +130,11 @@ struct CreditsEntryView : View {
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Usage")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(Color(.secondaryLabel))
+                            .foregroundColor(.secondary)
                             .lineLimit(1)
                         Text("$\(entry.totalUsage.formatNumber())")
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Color(.label))
+                            .foregroundColor(.primary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
                     }
@@ -150,7 +156,7 @@ struct CreditsEntryView : View {
 
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(Color(.systemGray5))
+                        .fill(widgetTertiaryFill)
                         .frame(height: 6)
                     Capsule()
                         .fill(Color(red: 0.05, green: 0.38, blue: 0.92))
@@ -159,6 +165,16 @@ struct CreditsEntryView : View {
             }
         }
     }
+}
+
+private var widgetTertiaryFill: Color {
+#if canImport(UIKit)
+    return Color(uiColor: .systemGray5)
+#elseif canImport(AppKit)
+    return Color(nsColor: .separatorColor).opacity(0.2)
+#else
+    return Color.gray.opacity(0.2)
+#endif
 }
 
 struct Credits: Widget {

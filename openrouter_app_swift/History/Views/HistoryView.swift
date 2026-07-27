@@ -39,7 +39,7 @@ struct HistoryView: View {
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(UIColor.systemBackground))
+                .background(Color.appSystemBackground)
                 .navigationTitle("History")
             } else {
                 List {
@@ -63,9 +63,9 @@ struct HistoryView: View {
                         }
                     }
                 }
-                .listStyle(.insetGrouped)
+                .listStyle(historyListStyle)
                 .scrollContentBackground(.hidden)
-                .background(Color(UIColor.systemBackground))
+                .background(Color.appSystemBackground)
                 .navigationTitle("History")
                 .toolbar(content: {
                     ToolbarItem(content: {
@@ -114,6 +114,16 @@ struct HistoryView: View {
                 appState.historyItem = item
             }
         }
+    }
+}
+
+private extension HistoryView {
+    var historyListStyle: some ListStyle {
+#if os(macOS)
+        return .inset
+#else
+        return .insetGrouped
+#endif
     }
 }
 
