@@ -4,7 +4,7 @@
 <dict>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.febryards.openrouterapp.shared</string>
+		<string>$(AppIdentifierPrefix)com.febryards.openroutermacapp.shared</string>
 	</array>
 </dict>
 </plist>

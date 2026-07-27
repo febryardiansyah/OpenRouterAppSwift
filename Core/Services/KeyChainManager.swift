@@ -5,7 +5,7 @@ class KeyChainManager {
     static let shared = KeyChainManager()
     init() {}
     
-    private let keyChain = Keychain(service: "com.febryards.openrouterapp", accessGroup: "U496PJH398.com.febryards.openrouterapp.shared")
+    private let keyChain = Keychain(service: "com.febryards.openroutermacapp", accessGroup: "U496PJH398.com.febryards.openroutermacapp")
     private let apiKeyConstant = "user_api_key"
     
     func saveApiKey(_ value: String) {
