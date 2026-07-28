@@ -1,6 +1,10 @@
 import SwiftUI
+#if canImport(AppKit)
+import AppKit
+#endif
 
 struct CreditsStatusBar: View {
+    @Environment(\.openURL) private var openURL
     @StateObject private var remainingCredit = RemainingCreditsViewModel()
     
     var body: some View {
@@ -36,6 +40,12 @@ struct CreditsStatusBar: View {
                     }
                     
                     Spacer(minLength: 0)
+                    
+                    Button("Open Dashboard") {
+                        if let url = URL(string: "https://openrouter.ai/settings/credits") {
+                            openURL(url)
+                        }
+                    }
                 }
                 
                 Text("$\(data.totalCredits.formattedCredit)")
@@ -81,7 +91,8 @@ struct CreditsStatusBar: View {
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
-            .keyboardShortcut("q")#endif
+            .keyboardShortcut("q")
+#endif
         }
         .padding()
         .frame(width: 300)

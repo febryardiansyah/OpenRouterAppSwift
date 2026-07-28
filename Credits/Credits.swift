@@ -73,81 +73,69 @@ struct CreditsEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        GeometryReader { proxy in
-            let totalWidth = proxy.size.width
-            let barWidth = max(0, totalWidth - 36)
-
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 11, style: .continuous)
-                            .fill(Color(red: 0.05, green: 0.38, blue: 0.92))
-                        Image(systemName: "bubble.left.and.bubble.right.fill")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
-                    .frame(width: 32, height: 32)
-
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("OpenRouter")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.85)
-                        Text("Total Credits")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-
-                    Spacer(minLength: 0)
-                }
-
-                Text(entry.errorMessage ?? "$\(entry.totalCredits.formattedCredit)")
-                    .font(.system(size: entry.errorMessage != nil ? 12 : 26, weight: .bold))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-
-                Divider()
-
-                HStack(spacing: 10) {
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Usage")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                        Text("$\(entry.totalUsage.formattedCredit)")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.85)
-                    }
-
-                    Spacer(minLength: 0)
-
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Left")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
-                            .lineLimit(1)
-                        Text("$\((entry.totalCredits - entry.totalUsage).formattedCredit)")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.85)
-                    }
-                }
-
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(widgetTertiaryFill)
-                        .frame(height: 6)
-                    Capsule()
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
                         .fill(Color(red: 0.05, green: 0.38, blue: 0.92))
-                        .frame(width: barWidth * 0.42, height: 6)
+                    Image(systemName: "bubble.left.and.bubble.right.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+                .frame(width: 32, height: 32)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("OpenRouter")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                    Text("Total Credits")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            Text(entry.errorMessage ?? "$\(entry.totalCredits.formattedCredit)")
+                .font(.system(size: entry.errorMessage != nil ? 12 : 26, weight: .bold))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+
+            Divider()
+
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Usage")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                    Text("$\(entry.totalUsage.formattedCredit)")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                }
+
+                Spacer(minLength: 0)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Left")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
+                        .lineLimit(1)
+                    Text("$\((entry.totalCredits - entry.totalUsage).formattedCredit)")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(Color(red: 0.05, green: 0.38, blue: 0.92))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
             }
+
+            ProgressView(value: entry.totalUsage, total: entry.totalCredits)
         }
     }
 }
@@ -187,6 +175,6 @@ struct Credits: Widget {
 #Preview(as: .systemSmall) {
     Credits()
 } timeline: {
-    CreditsEntry(totalCredits: 10.0, totalUsage: 5.0, date: Date())
+    CreditsEntry(totalCredits: 10.0, totalUsage: 4, date: Date())
     CreditsEntry(totalCredits: 0.0, totalUsage: 0.0, date: Date(), errorMessage: "API key is not valid")
 }

@@ -47,6 +47,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DB2A8802301854DB00998C3F /* Exceptions for "Credits" folder in "openrouter_app_swift" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Credits.swift,
+			);
+			target = DB78EC2B2FF53C5200D47287 /* openrouter_app_swift */;
+		};
 		DB56AF623016FCFC0039F468 /* Exceptions for "Credits" folder in "CreditsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -76,6 +83,7 @@
 		DB56AF553016FCFB0039F468 /* Credits */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				DB2A8802301854DB00998C3F /* Exceptions for "Credits" folder in "openrouter_app_swift" target */,
 				DB56AF623016FCFC0039F468 /* Exceptions for "Credits" folder in "CreditsExtension" target */,
 			);
 			path = Credits;
