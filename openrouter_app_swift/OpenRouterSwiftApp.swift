@@ -8,5 +8,12 @@ struct OpenRouterSwiftApp: App {
             ContentView()
         }
         .modelContainer(for: HistoryItem.self)
+        
+#if os(macOS)
+        MenuBarExtra("OpenRouter Credits", systemImage: "sparkles") {
+            CreditsStatusBar()
+        }.menuBarExtraStyle(.window)
+#endif
     }
 }
+

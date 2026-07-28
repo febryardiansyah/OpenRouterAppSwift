@@ -1,3 +1,5 @@
+import Foundation
+
 struct RemainingCredit: Codable {
     let totalCredits: Double
     let totalUsage: Double
@@ -10,4 +12,10 @@ struct RemainingCredit: Codable {
 
 struct RemainingCreditResponse: Codable {
     let data: RemainingCredit
+}
+
+extension Double {
+    var formattedCredit: String {
+        self.formatted(.number.precision(.fractionLength(2)))
+    }
 }

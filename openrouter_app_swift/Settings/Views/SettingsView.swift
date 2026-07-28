@@ -1,5 +1,9 @@
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 struct SettingsView: View {
     var body: some View {
         NavigationStack {
@@ -13,7 +17,7 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .background(Color(UIColor.systemBackground))
+            .background(Color.appSystemBackground)
             .navigationTitle("Settings")
         }
     }
@@ -54,7 +58,7 @@ struct SettingsView: View {
                                     hasSavedKey = true
                                     showSuccessAlert = true
                                     
-                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                    dismissKeyboard()
                                 }
                             
                             if hasSavedKey {
@@ -122,6 +126,12 @@ struct SettingsView: View {
                 }
             })
         }
+
+        private func dismissKeyboard() {
+#if canImport(UIKit)
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+#endif
+        }
     }
     
     private struct AppearanceItem: View {
@@ -141,6 +151,7 @@ struct SettingsView: View {
                 }
             }
         }
+
     }
     
     private struct UsageStats: View {
